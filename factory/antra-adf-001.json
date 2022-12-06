@@ -1,0 +1,9 @@
+{
+	"name": "antra-adf-001",
+	"location": "centralus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "ad0f11c1-9c01-4fd2-b3ec-c437dfdbd949",
+		"tenantId": "d17b025b-8b58-4d3e-8523-932e2156c5ff"
+	}
+}
