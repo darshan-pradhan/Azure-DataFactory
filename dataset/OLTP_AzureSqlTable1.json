@@ -5,6 +5,12 @@
 			"referenceName": "AzureSqlDatabase1",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"SourceTableName_02": {
+				"type": "String",
+				"defaultValue": "Applications.People"
+			}
+		},
 		"annotations": [],
 		"type": "AzureSqlTable",
 		"schema": [
@@ -96,6 +102,12 @@
 				"type": "datetime2",
 				"scale": 7
 			}
-		]
+		],
+		"typeProperties": {
+			"schema": {
+				"value": "select * from @dataset().SourceTableName_02",
+				"type": "Expression"
+			}
+		}
 	}
 }
