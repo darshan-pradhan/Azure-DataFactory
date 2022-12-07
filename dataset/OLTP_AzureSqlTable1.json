@@ -15,8 +15,9 @@
 		"type": "AzureSqlTable",
 		"schema": [],
 		"typeProperties": {
-			"schema": {
-				"value": "select * from @dataset().SourceTableName_02",
+			"schema": "dbo",
+			"table": {
+				"value": "@dataset().SourceTableName_02",
 				"type": "Expression"
 			}
 		}
