@@ -36,7 +36,8 @@
 						"referenceName": "OLTP_AzureSqlTable1",
 						"type": "DatasetReference",
 						"parameters": {
-							"SourceTableName_02": "Applications.People"
+							"SourceTableName_02": "People",
+							"SourceSchema01": "Applications"
 						}
 					}
 				],
@@ -45,7 +46,8 @@
 						"referenceName": "OLTP_AzureSqlTable1",
 						"type": "DatasetReference",
 						"parameters": {
-							"SourceTableName_02": "Applications.People"
+							"SourceTableName_02": "People",
+							"SourceSchema01": "Applications"
 						}
 					}
 				]
