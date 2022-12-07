@@ -38,7 +38,10 @@
 				"inputs": [
 					{
 						"referenceName": "OLTP_AzureSqlTable1",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"SourceTableName_02": "Applications.People"
+						}
 					}
 				],
 				"outputs": [
