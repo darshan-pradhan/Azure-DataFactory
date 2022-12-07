@@ -25,13 +25,9 @@
 						"partitionOption": "None"
 					},
 					"sink": {
-						"type": "JsonSink",
-						"storeSettings": {
-							"type": "AzureBlobStorageWriteSettings"
-						},
-						"formatSettings": {
-							"type": "JsonWriteSettings"
-						}
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
 					},
 					"enableStaging": false
 				},
@@ -46,8 +42,11 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "OLTP_Json1",
-						"type": "DatasetReference"
+						"referenceName": "OLTP_AzureSqlTable1",
+						"type": "DatasetReference",
+						"parameters": {
+							"SourceTableName_02": "Applications.People"
+						}
 					}
 				]
 			}
@@ -55,7 +54,7 @@
 		"parameters": {
 			"sourceTableName": {
 				"type": "String",
-				"defaultValue": "dbo.people"
+				"defaultValue": "dbo.People"
 			}
 		},
 		"annotations": []
