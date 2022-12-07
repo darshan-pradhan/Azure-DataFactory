@@ -8,14 +8,21 @@
 		"parameters": {
 			"SourceTableName_02": {
 				"type": "String",
-				"defaultValue": "Applications.People"
+				"defaultValue": "Order"
+			},
+			"SourceSchema01": {
+				"type": "String",
+				"defaultValue": "Sales"
 			}
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",
 		"schema": [],
 		"typeProperties": {
-			"schema": "dbo",
+			"schema": {
+				"value": "@dataset().SourceSchema01",
+				"type": "Expression"
+			},
 			"table": {
 				"value": "@dataset().SourceTableName_02",
 				"type": "Expression"
