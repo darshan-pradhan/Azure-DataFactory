@@ -37,7 +37,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"SourceTableName_02": "People",
-							"SourceSchema01": "Applications"
+							"SourceSchema01": "Application"
 						}
 					}
 				],
