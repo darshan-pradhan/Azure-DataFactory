@@ -56,7 +56,7 @@
 		"parameters": {
 			"sourceTableName": {
 				"type": "String",
-				"defaultValue": "dbo.People"
+				"defaultValue": "People"
 			}
 		},
 		"annotations": []
