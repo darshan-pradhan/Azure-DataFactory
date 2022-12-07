@@ -17,17 +17,17 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": {
-							"value": "select * from @pipeline().parameters.sourceTableName",
-							"type": "Expression"
-						},
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
 					"sink": {
-						"type": "AzureSqlSink",
-						"writeBehavior": "insert",
-						"sqlWriterUseTableLock": false
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
 					},
 					"enableStaging": false
 				},
@@ -43,12 +43,8 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "OLTP_AzureSqlTable1",
-						"type": "DatasetReference",
-						"parameters": {
-							"SourceTableName_02": "People",
-							"SourceSchema01": "Applications"
-						}
+						"referenceName": "OLTP_Json1",
+						"type": "DatasetReference"
 					}
 				]
 			}
