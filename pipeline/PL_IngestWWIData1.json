@@ -36,8 +36,14 @@
 						"referenceName": "OLTP_AzureSqlTable1",
 						"type": "DatasetReference",
 						"parameters": {
-							"SourceTableName_02": "People",
-							"SourceSchema01": "Application"
+							"SourceTableName_02": {
+								"value": "@pipeline().parameters.sourceTableName",
+								"type": "Expression"
+							},
+							"SourceSchema01": {
+								"value": "@pipeline().parameters.sourceTableSchema",
+								"type": "Expression"
+							}
 						}
 					}
 				],
@@ -53,6 +59,10 @@
 			"sourceTableName": {
 				"type": "String",
 				"defaultValue": "People"
+			},
+			"sourceTableSchema": {
+				"type": "String",
+				"defaultValue": "Application"
 			}
 		},
 		"annotations": []
