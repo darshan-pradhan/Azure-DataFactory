@@ -22,7 +22,7 @@
 			"sinks": [],
 			"transformations": [
 				{
-					"name": "InnerjoinwithOrderLines1"
+					"name": "joinwithOrderLines1"
 				},
 				{
 					"name": "selectColumnsforOrder1"
@@ -70,11 +70,11 @@
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> OrderLines1",
 				"OrderData1, OrderLines1 join(OrderData1@OrderID == OrderLines1@OrderID,",
-				"     joinType:'inner',",
+				"     joinType:'outer',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> InnerjoinwithOrderLines1",
-				"InnerjoinwithOrderLines1 select(mapColumn(",
+				"     broadcast: 'auto')~> joinwithOrderLines1",
+				"joinwithOrderLines1 select(mapColumn(",
 				"          OrderID = OrderData1@OrderID,",
 				"          CustomerID,",
 				"          SalespersonPersonID,",
