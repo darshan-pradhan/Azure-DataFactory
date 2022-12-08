@@ -13,7 +13,16 @@
 					"secureOutput": false,
 					"secureInput": false
 				},
-				"userProperties": [],
+				"userProperties": [
+					{
+						"name": "Source",
+						"value": "@{pipeline().parameters.sourceTableSchema}.@{pipeline().parameters.sourceTableName}"
+					},
+					{
+						"name": "Destination",
+						"value": "@{pipeline().parameters.sourceTableSchema}.@{pipeline().parameters.sourceTableName}"
+					}
+				],
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
@@ -59,6 +68,12 @@
 						}
 					}
 				]
+			},
+			{
+				"name": "ForEachOLTPTable",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": []
 			}
 		],
 		"parameters": {
@@ -69,6 +84,9 @@
 			"sourceTableSchema": {
 				"type": "String",
 				"defaultValue": "Application"
+			},
+			"tableList": {
+				"type": "array"
 			}
 		},
 		"annotations": []
