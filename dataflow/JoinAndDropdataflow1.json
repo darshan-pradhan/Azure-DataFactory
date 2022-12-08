@@ -10,6 +10,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "OrderData1"
+				},
+				{
+					"dataset": {
+						"referenceName": "OLTP_Json1",
+						"type": "DatasetReference"
+					},
+					"name": "OrderLines1"
 				}
 			],
 			"sinks": [],
@@ -36,7 +43,29 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
-				"     documentForm: 'documentPerLine') ~> OrderData1"
+				"     documentForm: 'documentPerLine') ~> OrderData1",
+				"source(output(",
+				"          OrderID as integer,",
+				"          CustomerID as integer,",
+				"          SalespersonPersonID as integer,",
+				"          PickedByPersonID as integer,",
+				"          ContactPersonID as integer,",
+				"          BackorderOrderID as integer,",
+				"          OrderDate as string,",
+				"          ExpectedDeliveryDate as string,",
+				"          CustomerPurchaseOrderNumber as string,",
+				"          IsUndersupplyBackordered as boolean,",
+				"          Comments as string,",
+				"          DeliveryInstructions as string,",
+				"          InternalComments as string,",
+				"          PickingCompletedWhen as string,",
+				"          LastEditedBy as integer,",
+				"          LastEditedWhen as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'documentPerLine') ~> OrderLines1"
 			]
 		}
 	}
