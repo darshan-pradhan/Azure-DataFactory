@@ -101,9 +101,15 @@
 				],
 				"typeProperties": {
 					"source": {
-						"type": "AzureSqlSource",
-						"queryTimeout": "02:00:00",
-						"partitionOption": "None"
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
 					},
 					"sink": {
 						"type": "AzureSqlSink",
@@ -115,14 +121,14 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "OLTP_AzureSqlTable1",
+						"referenceName": "OLTP_Json1",
 						"type": "DatasetReference",
 						"parameters": {
-							"SourceTableName_02": {
+							"TableName4Storage": {
 								"value": "@pipeline().parameters.sourceTableName",
 								"type": "Expression"
 							},
-							"SourceSchema01": {
+							"SchemaName4Storage": {
 								"value": "@pipeline().parameters.sourceTableSchema",
 								"type": "Expression"
 							}
