@@ -3,73 +3,6 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "CopyfromOLTP_1",
-				"type": "Copy",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [
-					{
-						"name": "Source",
-						"value": "@{pipeline().parameters.sourceTableSchema}.@{pipeline().parameters.sourceTableName}"
-					},
-					{
-						"name": "Destination",
-						"value": "@{pipeline().parameters.sourceTableSchema}.@{pipeline().parameters.sourceTableName}"
-					}
-				],
-				"typeProperties": {
-					"source": {
-						"type": "AzureSqlSource",
-						"queryTimeout": "02:00:00",
-						"partitionOption": "None"
-					},
-					"sink": {
-						"type": "AzureSqlSink",
-						"writeBehavior": "insert",
-						"sqlWriterUseTableLock": false
-					},
-					"enableStaging": false
-				},
-				"inputs": [
-					{
-						"referenceName": "OLTP_AzureSqlTable1",
-						"type": "DatasetReference",
-						"parameters": {
-							"SourceTableName_02": {
-								"value": "@pipeline().parameters.sourceTableName",
-								"type": "Expression"
-							},
-							"SourceSchema01": {
-								"value": "@pipeline().parameters.sourceTableSchema",
-								"type": "Expression"
-							}
-						}
-					}
-				],
-				"outputs": [
-					{
-						"referenceName": "ODS_CustomerTable1",
-						"type": "DatasetReference",
-						"parameters": {
-							"ODS_SchemaName": {
-								"value": "@pipeline().parameters.sourceTableSchema",
-								"type": "Expression"
-							},
-							"ODS_TableName": {
-								"value": "@pipeline().parameters.sourceTableName",
-								"type": "Expression"
-							}
-						}
-					}
-				]
-			},
-			{
 				"name": "ForEachOLTPTable",
 				"type": "ForEach",
 				"dependsOn": [],
@@ -81,7 +14,7 @@
 					},
 					"activities": [
 						{
-							"name": "CopyfromOLTP_1_copy1",
+							"name": "copyfromOLTP_1",
 							"type": "Copy",
 							"dependsOn": [],
 							"policy": {
@@ -109,8 +42,13 @@
 								},
 								"sink": {
 									"type": "AzureSqlSink",
+									"preCopyScript": {
+										"value": "IF EXISTS (SELECT * FROM [@pipeline().parameters.sourceTableSchema].[@pipeline().parameters.sourceTableName]) TRUNCATE TABLE [@pipeline().parameters.sourceTableSchema].[@pipeline().parameters.sourceTableName]",
+										"type": "Expression"
+									},
 									"writeBehavior": "insert",
-									"sqlWriterUseTableLock": false
+									"sqlWriterUseTableLock": false,
+									"disableMetricsCollection": false
 								},
 								"enableStaging": false
 							},
