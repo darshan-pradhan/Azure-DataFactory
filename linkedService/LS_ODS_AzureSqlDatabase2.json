@@ -1,0 +1,12 @@
+{
+	"name": "LS_ODS_AzureSqlDatabase2",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"connectionString": "integrated security=False;encrypt=True;connection timeout=30;data source=antrasepsqlserver01.database.windows.net;initial catalog=WideWorldImporters-ODS;user id=dpradhanroot",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQDkyMTUxMUJELTRGNEItNDM1QS1CMTIzLTM0NDMzQTUxMkQyOV9kNWE0MmVlNi00ODliLTQwNTctOGUyMy0xOTc5YWVhOTgyODMiDQp9"
+		}
+	}
+}
