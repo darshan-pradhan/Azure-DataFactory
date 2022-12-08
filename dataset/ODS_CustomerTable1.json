@@ -5,12 +5,26 @@
 			"referenceName": "LS_ODS_AzureSqlDatabase2",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"ODS_SchemaName": {
+				"type": "String"
+			},
+			"ODS_TableName": {
+				"type": "String"
+			}
+		},
 		"annotations": [],
 		"type": "AzureSqlTable",
 		"schema": [],
 		"typeProperties": {
-			"schema": "Sales",
-			"table": "Customers"
+			"schema": {
+				"value": "@dataset().ODS_SchemaName",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@dataset().ODS_TableName",
+				"type": "Expression"
+			}
 		}
 	}
 }
