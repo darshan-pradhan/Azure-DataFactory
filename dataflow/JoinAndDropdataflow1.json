@@ -19,7 +19,15 @@
 					"name": "OrderLines1"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ODS_OrderTable1",
+						"type": "DatasetReference"
+					},
+					"name": "sinkOrder1"
+				}
+			],
 			"transformations": [
 				{
 					"name": "joinwithOrderLines1"
@@ -98,7 +106,18 @@
 				"          LastEditedWhen = OrderLines1@LastEditedWhen",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> selectColumnsforOrder1"
+				"     skipDuplicateMapOutputs: true) ~> selectColumnsforOrder1",
+				"selectColumnsforOrder1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     recreate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sinkOrder1"
 			]
 		}
 	}

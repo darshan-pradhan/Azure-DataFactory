@@ -137,7 +137,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "ODS_CustomerTable1",
+						"referenceName": "ODS_OrderTable1",
 						"type": "DatasetReference",
 						"parameters": {
 							"ODS_SchemaName": {

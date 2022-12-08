@@ -1,5 +1,5 @@
 {
-	"name": "ODS_CustomerTable1",
+	"name": "ODS_OrderTable1",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "LS_ODS_AzureSqlDatabase2",
