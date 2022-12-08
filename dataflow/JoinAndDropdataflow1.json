@@ -13,14 +13,18 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "OLTP_Json1",
+						"referenceName": "OrderLinesTable1",
 						"type": "DatasetReference"
 					},
 					"name": "OrderLines1"
 				}
 			],
 			"sinks": [],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "InnerjoinwithOrderLines1"
+				}
+			],
 			"scriptLines": [
 				"source(output(",
 				"          OrderID as integer,",
@@ -45,27 +49,28 @@
 				"     ignoreNoFilesFound: false,",
 				"     documentForm: 'documentPerLine') ~> OrderData1",
 				"source(output(",
+				"          OrderLineID as integer,",
 				"          OrderID as integer,",
-				"          CustomerID as integer,",
-				"          SalespersonPersonID as integer,",
-				"          PickedByPersonID as integer,",
-				"          ContactPersonID as integer,",
-				"          BackorderOrderID as integer,",
-				"          OrderDate as string,",
-				"          ExpectedDeliveryDate as string,",
-				"          CustomerPurchaseOrderNumber as string,",
-				"          IsUndersupplyBackordered as boolean,",
-				"          Comments as string,",
-				"          DeliveryInstructions as string,",
-				"          InternalComments as string,",
-				"          PickingCompletedWhen as string,",
+				"          StockItemID as integer,",
+				"          Description as string,",
+				"          PackageTypeID as integer,",
+				"          Quantity as integer,",
+				"          UnitPrice as decimal(18,2),",
+				"          TaxRate as decimal(18,3),",
+				"          PickedQuantity as integer,",
+				"          PickingCompletedWhen as timestamp,",
 				"          LastEditedBy as integer,",
-				"          LastEditedWhen as string",
+				"          LastEditedWhen as timestamp",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false,",
-				"     documentForm: 'documentPerLine') ~> OrderLines1"
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> OrderLines1",
+				"OrderData1, OrderLines1 join(OrderData1@OrderID == OrderLines1@OrderID,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> InnerjoinwithOrderLines1"
 			]
 		}
 	}
