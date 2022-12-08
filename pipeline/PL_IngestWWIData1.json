@@ -79,83 +79,16 @@
 				}
 			},
 			{
-				"name": "copyfromOLTP_demo",
-				"type": "Copy",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [
-					{
-						"name": "Source",
-						"value": "@{pipeline().parameters.sourceTableSchema}.@{pipeline().parameters.sourceTableName}"
-					},
-					{
-						"name": "Destination",
-						"value": "@{pipeline().parameters.sourceTableSchema}.@{pipeline().parameters.sourceTableName}"
-					}
-				],
-				"typeProperties": {
-					"source": {
-						"type": "JsonSource",
-						"storeSettings": {
-							"type": "AzureBlobStorageReadSettings",
-							"recursive": true,
-							"enablePartitionDiscovery": false
-						},
-						"formatSettings": {
-							"type": "JsonReadSettings"
-						}
-					},
-					"sink": {
-						"type": "AzureSqlSink",
-						"writeBehavior": "insert",
-						"sqlWriterUseTableLock": false,
-						"disableMetricsCollection": false
-					},
-					"enableStaging": false
-				},
-				"inputs": [
-					{
-						"referenceName": "OLTP_Json1",
-						"type": "DatasetReference",
-						"parameters": {
-							"TableName4Storage": {
-								"value": "@pipeline().parameters.sourceTableName",
-								"type": "Expression"
-							},
-							"SchemaName4Storage": {
-								"value": "@pipeline().parameters.sourceTableSchema",
-								"type": "Expression"
-							}
-						}
-					}
-				],
-				"outputs": [
-					{
-						"referenceName": "ODS_OrderTable1",
-						"type": "DatasetReference",
-						"parameters": {
-							"ODS_SchemaName": {
-								"value": "@pipeline().parameters.sourceTableSchema",
-								"type": "Expression"
-							},
-							"ODS_TableName": {
-								"value": "@pipeline().parameters.sourceTableName",
-								"type": "Expression"
-							}
-						}
-					}
-				]
-			},
-			{
 				"name": "JoinAndDropData01",
 				"type": "ExecuteDataFlow",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "ForEachOLTPTable",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
