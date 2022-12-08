@@ -22,7 +22,10 @@
 					"value": "[@dataset().TableName4Storage].json",
 					"type": "Expression"
 				},
-				"folderPath": "Applications",
+				"folderPath": {
+					"value": "@dataset().SchemaName4Storage",
+					"type": "Expression"
+				},
 				"container": "wwioltp"
 			}
 		},
