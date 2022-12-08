@@ -106,7 +106,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/ODS_CustomerTable1')]",
+			"name": "[concat(parameters('factoryName'), '/ODS_OrderTable1')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -210,10 +210,145 @@
 						"container": "wwioltp"
 					}
 				},
-				"schema": {}
+				"schema": {
+					"type": "object",
+					"properties": {
+						"OrderID": {
+							"type": "integer"
+						},
+						"CustomerID": {
+							"type": "integer"
+						},
+						"SalespersonPersonID": {
+							"type": "integer"
+						},
+						"PickedByPersonID": {
+							"type": "integer"
+						},
+						"ContactPersonID": {
+							"type": "integer"
+						},
+						"BackorderOrderID": {
+							"type": "integer"
+						},
+						"OrderDate": {
+							"type": "string"
+						},
+						"ExpectedDeliveryDate": {
+							"type": "string"
+						},
+						"CustomerPurchaseOrderNumber": {
+							"type": "string"
+						},
+						"IsUndersupplyBackordered": {
+							"type": "boolean"
+						},
+						"Comments": {
+							"type": "null"
+						},
+						"DeliveryInstructions": {
+							"type": "null"
+						},
+						"InternalComments": {
+							"type": "null"
+						},
+						"PickingCompletedWhen": {
+							"type": "string"
+						},
+						"LastEditedBy": {
+							"type": "integer"
+						},
+						"LastEditedWhen": {
+							"type": "string"
+						}
+					}
+				}
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/OrderLinesTable1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "OrderLineID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "OrderID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "StockItemID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Description",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PackageTypeID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Quantity",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "UnitPrice",
+						"type": "decimal",
+						"precision": 18,
+						"scale": 2
+					},
+					{
+						"name": "TaxRate",
+						"type": "decimal",
+						"precision": 18,
+						"scale": 3
+					},
+					{
+						"name": "PickedQuantity",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "PickingCompletedWhen",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
+						"name": "LastEditedBy",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "LastEditedWhen",
+						"type": "datetime2",
+						"scale": 7
+					}
+				],
+				"typeProperties": {
+					"schema": "Sales",
+					"table": "OrderLines"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
 			]
 		},
 		{
@@ -249,6 +384,137 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/LS_AzureSqlDatabase2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/JoinAndDropdataflow1')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "OLTP_Json1",
+								"type": "DatasetReference"
+							},
+							"name": "OrderData1"
+						},
+						{
+							"dataset": {
+								"referenceName": "OrderLinesTable1",
+								"type": "DatasetReference"
+							},
+							"name": "OrderLines1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "ODS_OrderTable1",
+								"type": "DatasetReference"
+							},
+							"name": "sinkOrder1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "joinwithOrderLines1"
+						},
+						{
+							"name": "selectColumnsforOrder1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          OrderID as integer,",
+						"          CustomerID as integer,",
+						"          SalespersonPersonID as integer,",
+						"          PickedByPersonID as integer,",
+						"          ContactPersonID as integer,",
+						"          BackorderOrderID as integer,",
+						"          OrderDate as string,",
+						"          ExpectedDeliveryDate as string,",
+						"          CustomerPurchaseOrderNumber as string,",
+						"          IsUndersupplyBackordered as boolean,",
+						"          Comments as string,",
+						"          DeliveryInstructions as string,",
+						"          InternalComments as string,",
+						"          PickingCompletedWhen as string,",
+						"          LastEditedBy as integer,",
+						"          LastEditedWhen as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'documentPerLine') ~> OrderData1",
+						"source(output(",
+						"          OrderLineID as integer,",
+						"          OrderID as integer,",
+						"          StockItemID as integer,",
+						"          Description as string,",
+						"          PackageTypeID as integer,",
+						"          Quantity as integer,",
+						"          UnitPrice as decimal(18,2),",
+						"          TaxRate as decimal(18,3),",
+						"          PickedQuantity as integer,",
+						"          PickingCompletedWhen as timestamp,",
+						"          LastEditedBy as integer,",
+						"          LastEditedWhen as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> OrderLines1",
+						"OrderData1, OrderLines1 join(OrderData1@OrderID == OrderLines1@OrderID,",
+						"     joinType:'outer',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> joinwithOrderLines1",
+						"joinwithOrderLines1 select(mapColumn(",
+						"          OrderID = OrderData1@OrderID,",
+						"          CustomerID,",
+						"          SalespersonPersonID,",
+						"          PickedByPersonID,",
+						"          BackorderOrderID,",
+						"          OrderDate,",
+						"          ExpectedDeliveryDate,",
+						"          IsUndersupplyBackordered,",
+						"          PickingCompletedWhen = OrderData1@PickingCompletedWhen,",
+						"          LastEditedBy = OrderData1@LastEditedBy,",
+						"          LastEditedWhen = OrderData1@LastEditedWhen,",
+						"          OrderLineID,",
+						"          StockItemID,",
+						"          Description,",
+						"          PackageTypeID,",
+						"          Quantity,",
+						"          UnitPrice,",
+						"          TaxRate,",
+						"          PickingCompletedWhen = OrderLines1@PickingCompletedWhen,",
+						"          LastEditedBy = OrderLines1@LastEditedBy,",
+						"          LastEditedWhen = OrderLines1@LastEditedWhen",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> selectColumnsforOrder1",
+						"selectColumnsforOrder1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     recreate:true,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> sinkOrder1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/OLTP_Json1')]",
+				"[concat(variables('factoryId'), '/datasets/OrderLinesTable1')]",
+				"[concat(variables('factoryId'), '/datasets/ODS_OrderTable1')]"
 			]
 		},
 		{
@@ -334,9 +600,16 @@
 						}
 					},
 					{
-						"name": "copyfromOLTP_demo",
-						"type": "Copy",
-						"dependsOn": [],
+						"name": "JoinAndDropData01",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "ForEachOLTPTable",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "0.12:00:00",
 							"retry": 0,
@@ -344,68 +617,43 @@
 							"secureOutput": false,
 							"secureInput": false
 						},
-						"userProperties": [
-							{
-								"name": "Source",
-								"value": "@{pipeline().parameters.sourceTableSchema}.@{pipeline().parameters.sourceTableName}"
-							},
-							{
-								"name": "Destination",
-								"value": "@{pipeline().parameters.sourceTableSchema}.@{pipeline().parameters.sourceTableName}"
-							}
-						],
+						"userProperties": [],
 						"typeProperties": {
-							"source": {
-								"type": "JsonSource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "JsonReadSettings"
-								}
-							},
-							"sink": {
-								"type": "AzureSqlSink",
-								"writeBehavior": "insert",
-								"sqlWriterUseTableLock": false,
-								"disableMetricsCollection": false
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "OLTP_Json1",
-								"type": "DatasetReference",
-								"parameters": {
-									"TableName4Storage": {
-										"value": "@pipeline().parameters.sourceTableName",
-										"type": "Expression"
+							"dataflow": {
+								"referenceName": "JoinAndDropdataflow1",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"OrderData1": {
+										"TableName4Storage": {
+											"value": "@pipeline().parameters.sourceTableName",
+											"type": "Expression"
+										},
+										"SchemaName4Storage": {
+											"value": "@pipeline().parameters.sourceTableSchema",
+											"type": "Expression"
+										}
 									},
-									"SchemaName4Storage": {
-										"value": "@pipeline().parameters.sourceTableSchema",
-										"type": "Expression"
+									"OrderLines1": {},
+									"sinkOrder1": {
+										"ODS_SchemaName": {
+											"value": "@pipeline().parameters.sourceTableSchema",
+											"type": "Expression"
+										},
+										"ODS_TableName": {
+											"value": "@pipeline().parameters.sourceTableName",
+											"type": "Expression"
+										}
 									}
 								}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "ODS_CustomerTable1",
-								"type": "DatasetReference",
-								"parameters": {
-									"ODS_SchemaName": {
-										"value": "@pipeline().parameters.sourceTableSchema",
-										"type": "Expression"
-									},
-									"ODS_TableName": {
-										"value": "@pipeline().parameters.sourceTableName",
-										"type": "Expression"
-									}
-								}
-							}
-						]
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
 					}
 				],
 				"policy": {
@@ -428,9 +676,9 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/OLTP_Json1')]",
-				"[concat(variables('factoryId'), '/datasets/ODS_CustomerTable1')]",
-				"[concat(variables('factoryId'), '/datasets/OLTP_AzureSqlTable1')]"
+				"[concat(variables('factoryId'), '/dataflows/JoinAndDropdataflow1')]",
+				"[concat(variables('factoryId'), '/datasets/OLTP_AzureSqlTable1')]",
+				"[concat(variables('factoryId'), '/datasets/OLTP_Json1')]"
 			]
 		}
 	]
