@@ -73,7 +73,13 @@
 				"name": "ForEachOLTPTable",
 				"type": "ForEach",
 				"dependsOn": [],
-				"userProperties": []
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@pipeline().parameters.tableList",
+						"type": "Expression"
+					}
+				}
 			}
 		],
 		"parameters": {
