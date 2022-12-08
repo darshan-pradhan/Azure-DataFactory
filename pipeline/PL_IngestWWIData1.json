@@ -42,10 +42,6 @@
 								},
 								"sink": {
 									"type": "AzureSqlSink",
-									"preCopyScript": {
-										"value": "IF EXISTS (SELECT * FROM [@pipeline().parameters.sourceTableSchema].[@pipeline().parameters.sourceTableName]) TRUNCATE TABLE [@pipeline().parameters.sourceTableSchema].[@pipeline().parameters.sourceTableName]",
-										"type": "Expression"
-									},
 									"writeBehavior": "insert",
 									"sqlWriterUseTableLock": false,
 									"disableMetricsCollection": false
