@@ -5,13 +5,27 @@
 			"referenceName": "AzureBlobStorage1",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"TableName4Storage": {
+				"type": "String"
+			},
+			"SchemaName4Storage": {
+				"type": "String"
+			}
+		},
 		"annotations": [],
 		"type": "Json",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "People-data.json",
-				"folderPath": "Applications",
+				"fileName": {
+					"value": "@dataset().TableName4Storage",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().SchemaName4Storage",
+					"type": "Expression"
+				},
 				"container": "wwioltp"
 			}
 		},
