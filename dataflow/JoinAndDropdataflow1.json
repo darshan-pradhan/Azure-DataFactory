@@ -23,6 +23,9 @@
 			"transformations": [
 				{
 					"name": "InnerjoinwithOrderLines1"
+				},
+				{
+					"name": "selectColumnsforOrder1"
 				}
 			],
 			"scriptLines": [
@@ -70,7 +73,32 @@
 				"     joinType:'inner',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> InnerjoinwithOrderLines1"
+				"     broadcast: 'auto')~> InnerjoinwithOrderLines1",
+				"InnerjoinwithOrderLines1 select(mapColumn(",
+				"          OrderID = OrderData1@OrderID,",
+				"          CustomerID,",
+				"          SalespersonPersonID,",
+				"          PickedByPersonID,",
+				"          BackorderOrderID,",
+				"          OrderDate,",
+				"          ExpectedDeliveryDate,",
+				"          IsUndersupplyBackordered,",
+				"          PickingCompletedWhen = OrderData1@PickingCompletedWhen,",
+				"          LastEditedBy = OrderData1@LastEditedBy,",
+				"          LastEditedWhen = OrderData1@LastEditedWhen,",
+				"          OrderLineID,",
+				"          StockItemID,",
+				"          Description,",
+				"          PackageTypeID,",
+				"          Quantity,",
+				"          UnitPrice,",
+				"          TaxRate,",
+				"          PickingCompletedWhen = OrderLines1@PickingCompletedWhen,",
+				"          LastEditedBy = OrderLines1@LastEditedBy,",
+				"          LastEditedWhen = OrderLines1@LastEditedWhen",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectColumnsforOrder1"
 			]
 		}
 	}
