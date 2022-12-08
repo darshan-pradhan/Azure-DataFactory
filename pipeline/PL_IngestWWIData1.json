@@ -46,7 +46,17 @@
 				"outputs": [
 					{
 						"referenceName": "ODS_CustomerTable1",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"ODS_SchemaName": {
+								"value": "@pipeline().parameters.sourceTableSchema",
+								"type": "Expression"
+							},
+							"ODS_TableName": {
+								"value": "@pipeline().parameters.sourceTableName",
+								"type": "Expression"
+							}
+						}
 					}
 				]
 			}
