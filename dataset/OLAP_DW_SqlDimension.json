@@ -1,5 +1,5 @@
 {
-	"name": "SqlDimension",
+	"name": "OLAP_DW_SqlDimension",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "LS_AzureSqlDatabase2",
