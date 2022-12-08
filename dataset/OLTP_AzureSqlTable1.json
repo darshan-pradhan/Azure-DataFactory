@@ -8,7 +8,7 @@
 		"parameters": {
 			"SourceTableName_02": {
 				"type": "String",
-				"defaultValue": "Order"
+				"defaultValue": "Orders"
 			},
 			"SourceSchema01": {
 				"type": "String",
