@@ -14,7 +14,7 @@
 					},
 					"activities": [
 						{
-							"name": "copyfromOLTP_1",
+							"name": "Copy data from OLTP 2 stagingcontainer",
 							"type": "Copy",
 							"dependsOn": [],
 							"policy": {
@@ -24,16 +24,7 @@
 								"secureOutput": false,
 								"secureInput": false
 							},
-							"userProperties": [
-								{
-									"name": "Source",
-									"value": "@{pipeline().parameters.sourceTableSchema}.@{pipeline().parameters.sourceTableName}"
-								},
-								{
-									"name": "Destination",
-									"value": "@{pipeline().parameters.sourceTableSchema}.@{pipeline().parameters.sourceTableName}"
-								}
-							],
+							"userProperties": [],
 							"typeProperties": {
 								"source": {
 									"type": "AzureSqlSource",
@@ -41,10 +32,13 @@
 									"partitionOption": "None"
 								},
 								"sink": {
-									"type": "AzureSqlSink",
-									"writeBehavior": "insert",
-									"sqlWriterUseTableLock": false,
-									"disableMetricsCollection": false
+									"type": "JsonSink",
+									"storeSettings": {
+										"type": "AzureBlobStorageWriteSettings"
+									},
+									"formatSettings": {
+										"type": "JsonWriteSettings"
+									}
 								},
 								"enableStaging": false
 							},
@@ -66,15 +60,15 @@
 							],
 							"outputs": [
 								{
-									"referenceName": "ODS_CustomerTable1",
+									"referenceName": "OLTP_Json1",
 									"type": "DatasetReference",
 									"parameters": {
-										"ODS_SchemaName": {
-											"value": "@pipeline().parameters.sourceTableSchema",
+										"TableName4Storage": {
+											"value": "@pipeline().parameters.sourceTableName",
 											"type": "Expression"
 										},
-										"ODS_TableName": {
-											"value": "@pipeline().parameters.sourceTableName",
+										"SchemaName4Storage": {
+											"value": "@pipeline().parameters.sourceTableSchema",
 											"type": "Expression"
 										}
 									}
@@ -83,6 +77,74 @@
 						}
 					]
 				}
+			},
+			{
+				"name": "copyfromOLTP_demo",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "Source",
+						"value": "@{pipeline().parameters.sourceTableSchema}.@{pipeline().parameters.sourceTableName}"
+					},
+					{
+						"name": "Destination",
+						"value": "@{pipeline().parameters.sourceTableSchema}.@{pipeline().parameters.sourceTableName}"
+					}
+				],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "OLTP_AzureSqlTable1",
+						"type": "DatasetReference",
+						"parameters": {
+							"SourceTableName_02": {
+								"value": "@pipeline().parameters.sourceTableName",
+								"type": "Expression"
+							},
+							"SourceSchema01": {
+								"value": "@pipeline().parameters.sourceTableSchema",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ODS_CustomerTable1",
+						"type": "DatasetReference",
+						"parameters": {
+							"ODS_SchemaName": {
+								"value": "@pipeline().parameters.sourceTableSchema",
+								"type": "Expression"
+							},
+							"ODS_TableName": {
+								"value": "@pipeline().parameters.sourceTableName",
+								"type": "Expression"
+							}
+						}
+					}
+				]
 			}
 		],
 		"parameters": {
