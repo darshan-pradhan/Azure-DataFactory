@@ -22,6 +22,7 @@
 					"value": "[@dataset().TableName4Storage].json",
 					"type": "Expression"
 				},
+				"folderPath": "Applications",
 				"container": "wwioltp"
 			}
 		},
