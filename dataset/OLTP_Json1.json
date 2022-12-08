@@ -19,7 +19,7 @@
 			"location": {
 				"type": "AzureBlobStorageLocation",
 				"fileName": {
-					"value": "@dataset().TableName4Storage",
+					"value": "[@dataset().TableName4Storage].json",
 					"type": "Expression"
 				},
 				"folderPath": {
