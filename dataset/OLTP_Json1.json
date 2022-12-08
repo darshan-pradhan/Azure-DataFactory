@@ -29,6 +29,58 @@
 				"container": "wwioltp"
 			}
 		},
-		"schema": {}
+		"schema": {
+			"type": "object",
+			"properties": {
+				"OrderID": {
+					"type": "integer"
+				},
+				"CustomerID": {
+					"type": "integer"
+				},
+				"SalespersonPersonID": {
+					"type": "integer"
+				},
+				"PickedByPersonID": {
+					"type": "integer"
+				},
+				"ContactPersonID": {
+					"type": "integer"
+				},
+				"BackorderOrderID": {
+					"type": "integer"
+				},
+				"OrderDate": {
+					"type": "string"
+				},
+				"ExpectedDeliveryDate": {
+					"type": "string"
+				},
+				"CustomerPurchaseOrderNumber": {
+					"type": "string"
+				},
+				"IsUndersupplyBackordered": {
+					"type": "boolean"
+				},
+				"Comments": {
+					"type": "null"
+				},
+				"DeliveryInstructions": {
+					"type": "null"
+				},
+				"InternalComments": {
+					"type": "null"
+				},
+				"PickingCompletedWhen": {
+					"type": "string"
+				},
+				"LastEditedBy": {
+					"type": "integer"
+				},
+				"LastEditedWhen": {
+					"type": "string"
+				}
+			}
+		}
 	}
 }
