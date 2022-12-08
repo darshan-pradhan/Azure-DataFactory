@@ -100,7 +100,29 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "JoinAndDropdataflow1",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"OrderData1": {
+								"TableName4Storage": {
+									"value": "@pipeline().parameters.sourceTableName",
+									"type": "Expression"
+								},
+								"SchemaName4Storage": {
+									"value": "@pipeline().parameters.sourceTableSchema",
+									"type": "Expression"
+								}
+							},
+							"sinkOrder1": {
+								"ODS_SchemaName": {
+									"value": "@pipeline().parameters.sourceTableSchema",
+									"type": "Expression"
+								},
+								"ODS_TableName": {
+									"value": "@pipeline().parameters.sourceTableName",
+									"type": "Expression"
+								}
+							}
+						}
 					},
 					"compute": {
 						"coreCount": 8,
