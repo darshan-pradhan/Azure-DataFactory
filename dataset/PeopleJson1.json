@@ -1,0 +1,87 @@
+{
+	"name": "PeopleJson1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "People",
+				"folderPath": "Application",
+				"container": "wwioltp"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"PersonID": {
+					"type": "integer"
+				},
+				"FullName": {
+					"type": "string"
+				},
+				"PreferredName": {
+					"type": "string"
+				},
+				"SearchName": {
+					"type": "string"
+				},
+				"IsPermittedToLogon": {
+					"type": "boolean"
+				},
+				"LogonName": {
+					"type": "string"
+				},
+				"IsExternalLogonProvider": {
+					"type": "boolean"
+				},
+				"HashedPassword": {
+					"type": "string"
+				},
+				"IsSystemUser": {
+					"type": "boolean"
+				},
+				"IsEmployee": {
+					"type": "boolean"
+				},
+				"IsSalesperson": {
+					"type": "boolean"
+				},
+				"UserPreferences": {
+					"type": "string"
+				},
+				"PhoneNumber": {
+					"type": "string"
+				},
+				"FaxNumber": {
+					"type": "string"
+				},
+				"EmailAddress": {
+					"type": "string"
+				},
+				"Photo": {
+					"type": "null"
+				},
+				"CustomFields": {
+					"type": "string"
+				},
+				"OtherLanguages": {
+					"type": "string"
+				},
+				"LastEditedBy": {
+					"type": "integer"
+				},
+				"ValidFrom": {
+					"type": "string"
+				},
+				"ValidTo": {
+					"type": "string"
+				}
+			}
+		}
+	}
+}
