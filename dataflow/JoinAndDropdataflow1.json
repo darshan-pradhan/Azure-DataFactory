@@ -98,7 +98,7 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     documentForm: 'documentPerLine') ~> PackageTypes1",
-				"OrderLines1, PackageTypes1 join(OrderLines1@PackageTypeID == ERROR_FUNCTION(''),",
+				"OrderLines1, PackageTypes1 join(OrderLines1@PackageTypeID == PackageTypes1@PackageTypeID,",
 				"     joinType:'inner',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
