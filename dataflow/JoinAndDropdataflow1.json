@@ -17,6 +17,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "OrderLines1"
+				},
+				{
+					"dataset": {
+						"referenceName": "PackageTypesJson1",
+						"type": "DatasetReference"
+					},
+					"name": "PackageTypes1"
 				}
 			],
 			"sinks": [
@@ -25,15 +32,18 @@
 						"referenceName": "ODS_OrderTable1",
 						"type": "DatasetReference"
 					},
-					"name": "sinkOrder1"
+					"name": "sinkintoOrder1"
 				}
 			],
 			"transformations": [
 				{
-					"name": "joinwithOrderLines1"
+					"name": "joinwithPackageTypes1"
 				},
 				{
-					"name": "selectColumnsforOrder1"
+					"name": "joinwithOrderLinesJoin1"
+				},
+				{
+					"name": "select1"
 				}
 			],
 			"scriptLines": [
@@ -77,47 +87,63 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> OrderLines1",
-				"OrderData1, OrderLines1 join(OrderData1@OrderID == OrderLines1@OrderID,",
+				"source(output(",
+				"          PackageTypeID as integer,",
+				"          PackageTypeName as string,",
+				"          LastEditedBy as integer,",
+				"          ValidFrom as string,",
+				"          ValidTo as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'documentPerLine') ~> PackageTypes1",
+				"OrderLines1, PackageTypes1 join(OrderLines1@PackageTypeID == ERROR_FUNCTION(''),",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> joinwithPackageTypes1",
+				"OrderData1, joinwithPackageTypes1 join(OrderData1@OrderID == OrderLines1@OrderID,",
 				"     joinType:'outer',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> joinwithOrderLines1",
-				"joinwithOrderLines1 select(mapColumn(",
+				"     broadcast: 'auto')~> joinwithOrderLinesJoin1",
+				"joinwithOrderLinesJoin1 select(mapColumn(",
 				"          OrderID = OrderData1@OrderID,",
 				"          CustomerID,",
 				"          SalespersonPersonID,",
 				"          PickedByPersonID,",
 				"          BackorderOrderID,",
 				"          OrderDate,",
-				"          ExpectedDeliveryDate,",
-				"          IsUndersupplyBackordered,",
 				"          PickingCompletedWhen = OrderData1@PickingCompletedWhen,",
 				"          LastEditedBy = OrderData1@LastEditedBy,",
 				"          LastEditedWhen = OrderData1@LastEditedWhen,",
 				"          OrderLineID,",
 				"          StockItemID,",
 				"          Description,",
-				"          PackageTypeID,",
+				"          PackageTypeID = OrderLines1@PackageTypeID,",
 				"          Quantity,",
 				"          UnitPrice,",
 				"          TaxRate,",
 				"          PickingCompletedWhen = OrderLines1@PickingCompletedWhen,",
-				"          LastEditedBy = OrderLines1@LastEditedBy,",
-				"          LastEditedWhen = OrderLines1@LastEditedWhen",
+				"          PackageTypeID = PackageTypes1@PackageTypeID,",
+				"          PackageTypeName,",
+				"          LastEditedBy = PackageTypes1@LastEditedBy,",
+				"          ValidFrom,",
+				"          ValidTo",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> selectColumnsforOrder1",
-				"selectColumnsforOrder1 sink(allowSchemaDrift: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
 				"     insertable:true,",
 				"     updateable:false,",
 				"     upsertable:false,",
-				"     recreate:true,",
 				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> sinkOrder1"
+				"     errorHandlingOption: 'stopOnFirstError') ~> sinkintoOrder1"
 			]
 		}
 	}

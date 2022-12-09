@@ -1,0 +1,39 @@
+{
+	"name": "PackageTypesJson1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "PackageTypes",
+				"folderPath": "Warehouse",
+				"container": "wwioltp"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"PackageTypeID": {
+					"type": "integer"
+				},
+				"PackageTypeName": {
+					"type": "string"
+				},
+				"LastEditedBy": {
+					"type": "integer"
+				},
+				"ValidFrom": {
+					"type": "string"
+				},
+				"ValidTo": {
+					"type": "string"
+				}
+			}
+		}
+	}
+}
