@@ -112,7 +112,7 @@
 									"type": "Expression"
 								}
 							},
-							"sinkOrder1": {
+							"sinkintoOrder1": {
 								"ODS_SchemaName": {
 									"value": "@pipeline().parameters.sourceTableSchema",
 									"type": "Expression"
