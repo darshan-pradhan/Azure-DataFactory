@@ -148,14 +148,14 @@
 					"storedProcedureParameters": {
 						"LastModifiedtime": {
 							"value": {
-								"value": "@pipeline().parameters.Control_Table_Column_Name",
+								"value": "@{pipeline().parameters.Control_Table_Column_Name}",
 								"type": "Expression"
 							},
 							"type": "datetime"
 						},
 						"TableName": {
 							"value": {
-								"value": "@pipeline().parameters.Control_Table_Table_Name",
+								"value": "@{pipeline().parameters.Control_Table_Table_Name}",
 								"type": "Expression"
 							},
 							"type": "String"
