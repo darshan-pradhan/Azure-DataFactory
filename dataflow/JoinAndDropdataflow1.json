@@ -24,13 +24,6 @@
 						"type": "DatasetReference"
 					},
 					"name": "PackageTypes1"
-				},
-				{
-					"dataset": {
-						"referenceName": "PeopleJson1",
-						"type": "DatasetReference"
-					},
-					"name": "People1"
 				}
 			],
 			"sinks": [
@@ -108,33 +101,6 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     documentForm: 'documentPerLine') ~> PackageTypes1",
-				"source(output(",
-				"          PersonID as integer,",
-				"          FullName as string,",
-				"          PreferredName as string,",
-				"          SearchName as string,",
-				"          IsPermittedToLogon as boolean,",
-				"          LogonName as string,",
-				"          IsExternalLogonProvider as boolean,",
-				"          HashedPassword as string,",
-				"          IsSystemUser as boolean,",
-				"          IsEmployee as boolean,",
-				"          IsSalesperson as boolean,",
-				"          UserPreferences as string,",
-				"          PhoneNumber as string,",
-				"          FaxNumber as string,",
-				"          EmailAddress as string,",
-				"          Photo as string,",
-				"          CustomFields as string,",
-				"          OtherLanguages as string,",
-				"          LastEditedBy as integer,",
-				"          ValidFrom as string,",
-				"          ValidTo as string",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false,",
-				"     documentForm: 'documentPerLine') ~> People1",
 				"OrderLines1, PackageTypes1 join(OrderLines1@PackageTypeID == PackageTypes1@PackageTypeID,",
 				"     joinType:'inner',",
 				"     matchType:'exact',",
@@ -171,7 +137,7 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select1",
-				"select1, People1 join(SalespersonPersonID == PersonID",
+				"select1 join(SalespersonPersonID == PersonID",
 				"     && PickedByPersonID == PersonID",
 				"     && select1@LastEditedBy == PersonID,",
 				"     joinType:'inner',",
