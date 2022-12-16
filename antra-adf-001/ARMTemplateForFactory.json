@@ -175,6 +175,62 @@
 							},
 							"traceLevel": "Fine"
 						}
+					},
+					{
+						"name": "GenericSCDType2",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "GenericSCDType2",
+								"type": "DataFlowReference",
+								"parameters": {
+									"PrimaryKey": {
+										"value": "'@{pipeline().parameters.Primary Key}'",
+										"type": "Expression"
+									},
+									"Columns": {
+										"value": "'@{pipeline().parameters.Columns}'",
+										"type": "Expression"
+									}
+								},
+								"datasetParameters": {
+									"GenericInput": {
+										"Folder": {
+											"value": "@pipeline().parameters.Folder",
+											"type": "Expression"
+										}
+									},
+									"ExistingDimensionTable": {
+										"Table": {
+											"value": "@pipeline().parameters.TableforSCD2",
+											"type": "Expression"
+										}
+									},
+									"DimensionTableSink": {
+										"Table": {
+											"value": "@pipeline().parameters.TableforSCD2",
+											"type": "Expression"
+										}
+									}
+								},
+								"linkedServiceParameters": {}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
 					}
 				],
 				"policy": {
@@ -192,12 +248,26 @@
 					},
 					"tableList": {
 						"type": "array"
+					},
+					"Folder": {
+						"type": "String",
+						"defaultValue": "SCDType2"
+					},
+					"TableforSCD2": {
+						"type": "String"
+					},
+					"Primary Key": {
+						"type": "String"
+					},
+					"Columns": {
+						"type": "String"
 					}
 				},
 				"annotations": []
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/JoinAndDropdataflow1')]",
+				"[concat(variables('factoryId'), '/dataflows/GenericSCDType2')]",
 				"[concat(variables('factoryId'), '/datasets/OLTP_AzureSqlTable1')]",
 				"[concat(variables('factoryId'), '/datasets/OLTP_Json1')]"
 			]
