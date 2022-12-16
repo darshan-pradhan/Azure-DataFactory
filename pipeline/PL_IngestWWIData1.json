@@ -148,8 +148,14 @@
 						"referenceName": "GenericSCDType2",
 						"type": "DataFlowReference",
 						"parameters": {
-							"PrimaryKey": "'Employee ID'",
-							"Columns": "'Employee, Preferred Name, Is Salesperson'"
+							"PrimaryKey": {
+								"value": "'@{pipeline().parameters.Primary Key}'",
+								"type": "Expression"
+							},
+							"Columns": {
+								"value": "'@{pipeline().parameters.Columns}'",
+								"type": "Expression"
+							}
 						},
 						"datasetParameters": {
 							"GenericInput": {
@@ -197,6 +203,12 @@
 				"defaultValue": "SCDType2"
 			},
 			"TableforSCD2": {
+				"type": "String"
+			},
+			"Primary Key": {
+				"type": "String"
+			},
+			"Columns": {
 				"type": "String"
 			}
 		},
