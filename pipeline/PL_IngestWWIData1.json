@@ -130,6 +130,54 @@
 					},
 					"traceLevel": "Fine"
 				}
+			},
+			{
+				"name": "GenericSCDType2",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "GenericSCDType2",
+						"type": "DataFlowReference",
+						"parameters": {
+							"PrimaryKey": "'Employee ID'",
+							"Columns": "'Employee, Preferred Name, Is Salesperson'"
+						},
+						"datasetParameters": {
+							"GenericInput": {
+								"Folder": {
+									"value": "@pipeline().parameters.Folder",
+									"type": "Expression"
+								}
+							},
+							"ExistingDimensionTable": {
+								"Table": {
+									"value": "@pipeline().parameters.TableforSCD2",
+									"type": "Expression"
+								}
+							},
+							"DimensionTableSink": {
+								"Table": {
+									"value": "@pipeline().parameters.TableforSCD2",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
 			}
 		],
 		"parameters": {
@@ -143,6 +191,13 @@
 			},
 			"tableList": {
 				"type": "array"
+			},
+			"Folder": {
+				"type": "String",
+				"defaultValue": "SCDType2"
+			},
+			"TableforSCD2": {
+				"type": "String"
 			}
 		},
 		"annotations": []
