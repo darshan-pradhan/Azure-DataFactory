@@ -1,0 +1,445 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "antra-adf-001"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/JoinAndDropdataflow1')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "OLTP_Json1",
+								"type": "DatasetReference"
+							},
+							"name": "OrderData1"
+						},
+						{
+							"dataset": {
+								"referenceName": "OrderLinesTable1",
+								"type": "DatasetReference"
+							},
+							"name": "OrderLines1"
+						},
+						{
+							"dataset": {
+								"referenceName": "PackageTypesJson1",
+								"type": "DatasetReference"
+							},
+							"name": "PackageTypes1"
+						},
+						{
+							"dataset": {
+								"referenceName": "PeopleJson1",
+								"type": "DatasetReference"
+							},
+							"name": "People1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "ODS_OrderTable1",
+								"type": "DatasetReference"
+							},
+							"name": "sinkintoOrder1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "joinwithPackageTypes1"
+						},
+						{
+							"name": "joinwithOrderLinesJoin1"
+						},
+						{
+							"name": "select1"
+						},
+						{
+							"name": "joinwithPeople1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          OrderID as integer,",
+						"          CustomerID as integer,",
+						"          SalespersonPersonID as integer,",
+						"          PickedByPersonID as integer,",
+						"          ContactPersonID as integer,",
+						"          BackorderOrderID as integer,",
+						"          OrderDate as string,",
+						"          ExpectedDeliveryDate as string,",
+						"          CustomerPurchaseOrderNumber as string,",
+						"          IsUndersupplyBackordered as boolean,",
+						"          Comments as string,",
+						"          DeliveryInstructions as string,",
+						"          InternalComments as string,",
+						"          PickingCompletedWhen as string,",
+						"          LastEditedBy as integer,",
+						"          LastEditedWhen as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'documentPerLine') ~> OrderData1",
+						"source(output(",
+						"          OrderLineID as integer,",
+						"          OrderID as integer,",
+						"          StockItemID as integer,",
+						"          Description as string,",
+						"          PackageTypeID as integer,",
+						"          Quantity as integer,",
+						"          UnitPrice as decimal(18,2),",
+						"          TaxRate as decimal(18,3),",
+						"          PickedQuantity as integer,",
+						"          PickingCompletedWhen as timestamp,",
+						"          LastEditedBy as integer,",
+						"          LastEditedWhen as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> OrderLines1",
+						"source(output(",
+						"          PackageTypeID as integer,",
+						"          PackageTypeName as string,",
+						"          LastEditedBy as integer,",
+						"          ValidFrom as string,",
+						"          ValidTo as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'documentPerLine') ~> PackageTypes1",
+						"source(output(",
+						"          PersonID as integer,",
+						"          FullName as string,",
+						"          PreferredName as string,",
+						"          SearchName as string,",
+						"          IsPermittedToLogon as boolean,",
+						"          LogonName as string,",
+						"          IsExternalLogonProvider as boolean,",
+						"          HashedPassword as string,",
+						"          IsSystemUser as boolean,",
+						"          IsEmployee as boolean,",
+						"          IsSalesperson as boolean,",
+						"          UserPreferences as string,",
+						"          PhoneNumber as string,",
+						"          FaxNumber as string,",
+						"          EmailAddress as string,",
+						"          Photo as string,",
+						"          CustomFields as string,",
+						"          OtherLanguages as string,",
+						"          LastEditedBy as integer,",
+						"          ValidFrom as string,",
+						"          ValidTo as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'documentPerLine') ~> People1",
+						"OrderLines1, PackageTypes1 join(OrderLines1@PackageTypeID == PackageTypes1@PackageTypeID,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> joinwithPackageTypes1",
+						"OrderData1, joinwithPackageTypes1 join(OrderData1@OrderID == OrderLines1@OrderID,",
+						"     joinType:'outer',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> joinwithOrderLinesJoin1",
+						"joinwithOrderLinesJoin1 select(mapColumn(",
+						"          OrderID = OrderData1@OrderID,",
+						"          CustomerID,",
+						"          SalespersonPersonID,",
+						"          PickedByPersonID,",
+						"          BackorderOrderID,",
+						"          OrderDate,",
+						"          PickingCompletedWhen = OrderData1@PickingCompletedWhen,",
+						"          LastEditedBy = OrderData1@LastEditedBy,",
+						"          LastEditedWhen = OrderData1@LastEditedWhen,",
+						"          OrderLineID,",
+						"          StockItemID,",
+						"          Description,",
+						"          PackageTypeID = OrderLines1@PackageTypeID,",
+						"          Quantity,",
+						"          UnitPrice,",
+						"          TaxRate,",
+						"          PickingCompletedWhen = OrderLines1@PickingCompletedWhen,",
+						"          PackageTypeID = PackageTypes1@PackageTypeID,",
+						"          PackageTypeName,",
+						"          LastEditedBy = PackageTypes1@LastEditedBy,",
+						"          ValidFrom,",
+						"          ValidTo",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"select1, People1 join(SalespersonPersonID == PersonID",
+						"     && PickedByPersonID == PersonID",
+						"     && select1@LastEditedBy == PersonID,",
+						"     joinType:'left',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> joinwithPeople1",
+						"joinwithPeople1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> sinkintoOrder1"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PL_IngestWWIData1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ForEachOLTPTable",
+						"type": "ForEach",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@pipeline().parameters.tableList",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Copy data from OLTP 2 stagingcontainer",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "JsonSink",
+											"storeSettings": {
+												"type": "AzureBlobStorageWriteSettings"
+											},
+											"formatSettings": {
+												"type": "JsonWriteSettings"
+											}
+										},
+										"enableStaging": false
+									},
+									"inputs": [
+										{
+											"referenceName": "OLTP_AzureSqlTable1",
+											"type": "DatasetReference",
+											"parameters": {
+												"SourceTableName_02": {
+													"value": "@pipeline().parameters.sourceTableName",
+													"type": "Expression"
+												},
+												"SourceSchema01": {
+													"value": "@pipeline().parameters.sourceTableSchema",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "OLTP_Json1",
+											"type": "DatasetReference",
+											"parameters": {
+												"TableName4Storage": {
+													"value": "@pipeline().parameters.sourceTableName",
+													"type": "Expression"
+												},
+												"SchemaName4Storage": {
+													"value": "@pipeline().parameters.sourceTableSchema",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					},
+					{
+						"name": "JoinAndDropData01",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "ForEachOLTPTable",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "JoinAndDropdataflow1",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"OrderData1": {
+										"TableName4Storage": {
+											"value": "@pipeline().parameters.sourceTableName",
+											"type": "Expression"
+										},
+										"SchemaName4Storage": {
+											"value": "@pipeline().parameters.sourceTableSchema",
+											"type": "Expression"
+										}
+									},
+									"OrderLines1": {},
+									"PackageTypes1": {},
+									"People1": {},
+									"sinkintoOrder1": {
+										"ODS_SchemaName": {
+											"value": "@pipeline().parameters.sourceTableSchema",
+											"type": "Expression"
+										},
+										"ODS_TableName": {
+											"value": "@pipeline().parameters.sourceTableName",
+											"type": "Expression"
+										}
+									}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					},
+					{
+						"name": "GenericSCDType2",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "GenericSCDType2",
+								"type": "DataFlowReference",
+								"parameters": {
+									"PrimaryKey": {
+										"value": "'@{pipeline().parameters.Primary Key}'",
+										"type": "Expression"
+									},
+									"Columns": {
+										"value": "'@{pipeline().parameters.Columns}'",
+										"type": "Expression"
+									}
+								},
+								"datasetParameters": {
+									"GenericInput": {
+										"Folder": {
+											"value": "@pipeline().parameters.Folder",
+											"type": "Expression"
+										}
+									},
+									"ExistingDimensionTable": {
+										"Table": {
+											"value": "@pipeline().parameters.TableforSCD2",
+											"type": "Expression"
+										}
+									},
+									"DimensionTableSink": {
+										"Table": {
+											"value": "@pipeline().parameters.TableforSCD2",
+											"type": "Expression"
+										}
+									}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"sourceTableName": {
+						"type": "String",
+						"defaultValue": "People"
+					},
+					"sourceTableSchema": {
+						"type": "String",
+						"defaultValue": "Application"
+					},
+					"tableList": {
+						"type": "array"
+					},
+					"Folder": {
+						"type": "String",
+						"defaultValue": "SCDType2"
+					},
+					"TableforSCD2": {
+						"type": "String"
+					},
+					"Primary Key": {
+						"type": "String"
+					},
+					"Columns": {
+						"type": "String"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/JoinAndDropdataflow1')]"
+			]
+		}
+	]
+}
