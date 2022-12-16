@@ -154,7 +154,9 @@
 										}
 									},
 									"OrderLines1": {},
-									"sinkOrder1": {
+									"PackageTypes1": {},
+									"People1": {},
+									"sinkintoOrder1": {
 										"ODS_SchemaName": {
 											"value": "@pipeline().parameters.sourceTableSchema",
 											"type": "Expression"
@@ -201,6 +203,45 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/GenericDataset')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Folder": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "SCD"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": {
+							"value": "@dataset().Folder",
+							"type": "Expression"
+						},
+						"container": "wwioltp"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ODS_OrderTable1')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -233,6 +274,41 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/LS_ODS_AzureSqlDatabase2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/OLAP_DW_SqlDimension')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_AzureSqlDatabase2",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Table": {
+						"type": "string"
+					},
+					"Schema02": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().Schema02",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().Table",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_AzureSqlDatabase2')]"
 			]
 		},
 		{
@@ -447,6 +523,260 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Order_DW_Table1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_AzureSqlDatabase2",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Order Key",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "City Key",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Customer Key",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Stock Item Key",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Order Date Key",
+						"type": "date"
+					},
+					{
+						"name": "Picked Date Key",
+						"type": "date"
+					},
+					{
+						"name": "Salesperson Key",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Picker Key",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "WWI Order ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "WWI Backorder ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Description",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Package",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Quantity",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Unit Price",
+						"type": "decimal",
+						"precision": 18,
+						"scale": 2
+					},
+					{
+						"name": "Tax Rate",
+						"type": "decimal",
+						"precision": 18,
+						"scale": 3
+					},
+					{
+						"name": "Total Excluding Tax",
+						"type": "decimal",
+						"precision": 18,
+						"scale": 2
+					},
+					{
+						"name": "Tax Amount",
+						"type": "decimal",
+						"precision": 18,
+						"scale": 2
+					},
+					{
+						"name": "Total Including Tax",
+						"type": "decimal",
+						"precision": 18,
+						"scale": 2
+					},
+					{
+						"name": "Lineage Key",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "Fact",
+					"table": "Order"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_AzureSqlDatabase2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PackageTypesJson1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "PackageTypes",
+						"folderPath": "Warehouse",
+						"container": "wwioltp"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"PackageTypeID": {
+							"type": "integer"
+						},
+						"PackageTypeName": {
+							"type": "string"
+						},
+						"LastEditedBy": {
+							"type": "integer"
+						},
+						"ValidFrom": {
+							"type": "string"
+						},
+						"ValidTo": {
+							"type": "string"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PeopleJson1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "People",
+						"folderPath": "Application",
+						"container": "wwioltp"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"PersonID": {
+							"type": "integer"
+						},
+						"FullName": {
+							"type": "string"
+						},
+						"PreferredName": {
+							"type": "string"
+						},
+						"SearchName": {
+							"type": "string"
+						},
+						"IsPermittedToLogon": {
+							"type": "boolean"
+						},
+						"LogonName": {
+							"type": "string"
+						},
+						"IsExternalLogonProvider": {
+							"type": "boolean"
+						},
+						"HashedPassword": {
+							"type": "string"
+						},
+						"IsSystemUser": {
+							"type": "boolean"
+						},
+						"IsEmployee": {
+							"type": "boolean"
+						},
+						"IsSalesperson": {
+							"type": "boolean"
+						},
+						"UserPreferences": {
+							"type": "string"
+						},
+						"PhoneNumber": {
+							"type": "string"
+						},
+						"FaxNumber": {
+							"type": "string"
+						},
+						"EmailAddress": {
+							"type": "string"
+						},
+						"Photo": {
+							"type": "null"
+						},
+						"CustomFields": {
+							"type": "string"
+						},
+						"OtherLanguages": {
+							"type": "string"
+						},
+						"LastEditedBy": {
+							"type": "integer"
+						},
+						"ValidFrom": {
+							"type": "string"
+						},
+						"ValidTo": {
+							"type": "string"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/SqlDimension')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -458,19 +788,13 @@
 				"parameters": {
 					"Table": {
 						"type": "string"
-					},
-					"Schema02": {
-						"type": "String"
 					}
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
 				"schema": [],
 				"typeProperties": {
-					"schema": {
-						"value": "@dataset().Schema02",
-						"type": "Expression"
-					},
+					"schema": "Dimension",
 					"table": {
 						"value": "@dataset().Table",
 						"type": "Expression"
@@ -551,6 +875,96 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/GenericSCDType2')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "GenericSCD"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "GenericDataset",
+								"type": "DatasetReference"
+							},
+							"name": "GenericInput"
+						},
+						{
+							"dataset": {
+								"referenceName": "SqlDimension",
+								"type": "DatasetReference"
+							},
+							"name": "ExistingDimensionTable"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "SqlDimension",
+								"type": "DatasetReference"
+							},
+							"name": "DimensionTableSink"
+						}
+					],
+					"transformations": [
+						{
+							"name": "NewAndUpdatedRows"
+						},
+						{
+							"name": "AddHashInput"
+						},
+						{
+							"name": "AddHashExisting"
+						},
+						{
+							"name": "GetMaxSurrogateKey"
+						},
+						{
+							"name": "AddKey"
+						},
+						{
+							"name": "JoinWithMaxSurrogateKey"
+						},
+						{
+							"name": "AddDimensionColumns"
+						},
+						{
+							"name": "FilterForUpdatedValues"
+						},
+						{
+							"name": "UpdateObsolete"
+						},
+						{
+							"name": "DropUnwantedColsInput"
+						},
+						{
+							"name": "UnionAllData"
+						},
+						{
+							"name": "MarkAsUpdate"
+						},
+						{
+							"name": "DropUnwantedColumns"
+						},
+						{
+							"name": "MarkAsInsert"
+						},
+						{
+							"name": "FilterForActive"
+						}
+					],
+					"script": "parameters{\n\tPrimaryKey as string ('Employee ID'),\n\tColumns as string ('Employee, Preferred Name, Is Salesperson')\n}\nsource(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> GenericInput\nsource(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> ExistingDimensionTable\nAddHashInput, AddHashExisting exists(AddHashInput@id_hash == AddHashExisting@id_hash\n\t&& AddHashInput@columns_hash == AddHashExisting@columns_hash,\n\tnegate:true,\n\tbroadcast: 'auto')~> NewAndUpdatedRows\nGenericInput derive(id_hash = md5(byName($PrimaryKey)),\n\t\tcolumns_hash = md5(byNames(split($Columns,',')))) ~> AddHashInput\nFilterForActive derive(id_hash = md5(byNames(split($PrimaryKey,','))),\n\t\tcolumns_hash = md5(byNames(split($Columns,',')))) ~> AddHashExisting\nAddHashExisting aggregate(MaxSurrogateKey = max(toInteger(byName('Key')))) ~> GetMaxSurrogateKey\nNewAndUpdatedRows keyGenerate(output(Key as long),\n\tstartAt: 1L,\n\tstepValue: 1L) ~> AddKey\nAddKey, GetMaxSurrogateKey join(Key == MaxSurrogateKey || true(),\n\tjoinType:'cross',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'right')~> JoinWithMaxSurrogateKey\nJoinWithMaxSurrogateKey derive(Key = Key + MaxSurrogateKey,\n\t\tActive = 1,\n\t\tActiveStartTime = currentUTC(),\n\t\tActiveEndTime = toTimestamp(toString(null()))) ~> AddDimensionColumns\nAddHashExisting, NewAndUpdatedRows exists(AddHashExisting@id_hash == AddHashInput@id_hash,\n\tnegate:false,\n\tbroadcast: 'auto')~> FilterForUpdatedValues\nFilterForUpdatedValues derive(Active = 0,\n\t\tActiveEndTime = currentUTC()) ~> UpdateObsolete\nAddDimensionColumns select(mapColumn(\n\t\teach(match(!in(['id_hash','columns_hash','MaxSurrogateKey'],name)))\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> DropUnwantedColsInput\nMarkAsInsert, DropUnwantedColumns union(byName: true)~> UnionAllData\nUpdateObsolete alterRow(updateIf(true())) ~> MarkAsUpdate\nMarkAsUpdate select(mapColumn(\n\t\teach(match(!in(['id_hash','columns_hash','MaxSurrogateKey'],name)))\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> DropUnwantedColumns\nDropUnwantedColsInput alterRow(insertIf(true())) ~> MarkAsInsert\nExistingDimensionTable filter(toInteger(byName('Active')) == 1) ~> FilterForActive\nUnionAllData sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:[($PrimaryKey)],\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> DimensionTableSink"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/GenericDataset')]",
+				"[concat(variables('factoryId'), '/datasets/SqlDimension')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/JoinAndDropdataflow1')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -571,6 +985,20 @@
 								"type": "DatasetReference"
 							},
 							"name": "OrderLines1"
+						},
+						{
+							"dataset": {
+								"referenceName": "PackageTypesJson1",
+								"type": "DatasetReference"
+							},
+							"name": "PackageTypes1"
+						},
+						{
+							"dataset": {
+								"referenceName": "PeopleJson1",
+								"type": "DatasetReference"
+							},
+							"name": "People1"
 						}
 					],
 					"sinks": [
@@ -579,15 +1007,21 @@
 								"referenceName": "ODS_OrderTable1",
 								"type": "DatasetReference"
 							},
-							"name": "sinkOrder1"
+							"name": "sinkintoOrder1"
 						}
 					],
 					"transformations": [
 						{
-							"name": "joinwithOrderLines1"
+							"name": "joinwithPackageTypes1"
 						},
 						{
-							"name": "selectColumnsforOrder1"
+							"name": "joinwithOrderLinesJoin1"
+						},
+						{
+							"name": "select1"
+						},
+						{
+							"name": "joinwithPeople1"
 						}
 					],
 					"scriptLines": [
@@ -631,53 +1065,105 @@
 						"     validateSchema: false,",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
 						"     format: 'table') ~> OrderLines1",
-						"OrderData1, OrderLines1 join(OrderData1@OrderID == OrderLines1@OrderID,",
+						"source(output(",
+						"          PackageTypeID as integer,",
+						"          PackageTypeName as string,",
+						"          LastEditedBy as integer,",
+						"          ValidFrom as string,",
+						"          ValidTo as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'documentPerLine') ~> PackageTypes1",
+						"source(output(",
+						"          PersonID as integer,",
+						"          FullName as string,",
+						"          PreferredName as string,",
+						"          SearchName as string,",
+						"          IsPermittedToLogon as boolean,",
+						"          LogonName as string,",
+						"          IsExternalLogonProvider as boolean,",
+						"          HashedPassword as string,",
+						"          IsSystemUser as boolean,",
+						"          IsEmployee as boolean,",
+						"          IsSalesperson as boolean,",
+						"          UserPreferences as string,",
+						"          PhoneNumber as string,",
+						"          FaxNumber as string,",
+						"          EmailAddress as string,",
+						"          Photo as string,",
+						"          CustomFields as string,",
+						"          OtherLanguages as string,",
+						"          LastEditedBy as integer,",
+						"          ValidFrom as string,",
+						"          ValidTo as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'documentPerLine') ~> People1",
+						"OrderLines1, PackageTypes1 join(OrderLines1@PackageTypeID == PackageTypes1@PackageTypeID,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> joinwithPackageTypes1",
+						"OrderData1, joinwithPackageTypes1 join(OrderData1@OrderID == OrderLines1@OrderID,",
 						"     joinType:'outer',",
 						"     matchType:'exact',",
 						"     ignoreSpaces: false,",
-						"     broadcast: 'auto')~> joinwithOrderLines1",
-						"joinwithOrderLines1 select(mapColumn(",
+						"     broadcast: 'auto')~> joinwithOrderLinesJoin1",
+						"joinwithOrderLinesJoin1 select(mapColumn(",
 						"          OrderID = OrderData1@OrderID,",
 						"          CustomerID,",
 						"          SalespersonPersonID,",
 						"          PickedByPersonID,",
 						"          BackorderOrderID,",
 						"          OrderDate,",
-						"          ExpectedDeliveryDate,",
-						"          IsUndersupplyBackordered,",
 						"          PickingCompletedWhen = OrderData1@PickingCompletedWhen,",
 						"          LastEditedBy = OrderData1@LastEditedBy,",
 						"          LastEditedWhen = OrderData1@LastEditedWhen,",
 						"          OrderLineID,",
 						"          StockItemID,",
 						"          Description,",
-						"          PackageTypeID,",
+						"          PackageTypeID = OrderLines1@PackageTypeID,",
 						"          Quantity,",
 						"          UnitPrice,",
 						"          TaxRate,",
 						"          PickingCompletedWhen = OrderLines1@PickingCompletedWhen,",
-						"          LastEditedBy = OrderLines1@LastEditedBy,",
-						"          LastEditedWhen = OrderLines1@LastEditedWhen",
+						"          PackageTypeID = PackageTypes1@PackageTypeID,",
+						"          PackageTypeName,",
+						"          LastEditedBy = PackageTypes1@LastEditedBy,",
+						"          ValidFrom,",
+						"          ValidTo",
 						"     ),",
 						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> selectColumnsforOrder1",
-						"selectColumnsforOrder1 sink(allowSchemaDrift: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"select1, People1 join(SalespersonPersonID == PersonID",
+						"     && PickedByPersonID == PersonID",
+						"     && select1@LastEditedBy == PersonID,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> joinwithPeople1",
+						"joinwithPeople1 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     deletable:false,",
 						"     insertable:true,",
 						"     updateable:false,",
 						"     upsertable:false,",
-						"     recreate:true,",
 						"     format: 'table',",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
-						"     errorHandlingOption: 'stopOnFirstError') ~> sinkOrder1"
+						"     errorHandlingOption: 'stopOnFirstError') ~> sinkintoOrder1"
 					]
 				}
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/OLTP_Json1')]",
 				"[concat(variables('factoryId'), '/datasets/OrderLinesTable1')]",
+				"[concat(variables('factoryId'), '/datasets/PackageTypesJson1')]",
+				"[concat(variables('factoryId'), '/datasets/PeopleJson1')]",
 				"[concat(variables('factoryId'), '/datasets/ODS_OrderTable1')]"
 			]
 		}
