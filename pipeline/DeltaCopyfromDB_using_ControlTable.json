@@ -147,11 +147,17 @@
 					"storedProcedureName": "[dbo].[usp_update_watermark]",
 					"storedProcedureParameters": {
 						"LastModifiedtime": {
-							"value": "@{activity('LookupNewWaterMarkActivity').output.firstRow.NewWatermarkvalue}",
+							"value": {
+								"value": "@{activity('LookupCurrentWaterMarkActivity').output.firstRow.NewWatermarkvalue}",
+								"type": "Expression"
+							},
 							"type": "DateTime"
 						},
 						"TableName": {
-							"value": "@{activity('LookupOldWaterMarkActivity').output.firstRow.TableName}",
+							"value": {
+								"value": "@{activity('LookupLastWaterMarkActivity').output.firstRow.TableName}",
+								"type": "Expression"
+							},
 							"type": "String"
 						}
 					}
