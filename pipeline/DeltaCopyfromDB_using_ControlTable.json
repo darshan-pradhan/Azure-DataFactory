@@ -155,7 +155,7 @@
 						},
 						"TableName": {
 							"value": {
-								"value": "@{activity('LookupLastWaterMark').output.firstRow.TableName}",
+								"value": "@activity('LookupLastWaterMark').output",
 								"type": "Expression"
 							},
 							"type": "String"
